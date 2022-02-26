@@ -1,0 +1,56 @@
+---
+- name: Configure Ubuntu Laptop
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        cache_valid_time: 3600
+        update_cache: yes
+
+    - name: Install git
+      apt:
+        name: git
+        state: present
+
+    - name: Install VSCode
+      apt:
+        deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+        state: present
+
+    - name: Install VSCode extensions.
+      ansible.builtin.command:
+        cmd: code --install-extension {{ item }}
+        creates: ~/.vscode/extensions/{{ item }}*
+      become: no
+      loop:
+        - redhat.ansible
+        - aaron-bond.better-comments
+        - ms-python.python
+
+    - name: Install Ansible pre-requisites.
+      apt:
+        name: software-properties-common
+        state: present
+
+    - name: Add Ansible repository.
+      ansible.builtin.apt_repository:
+        repo: ppa:ansible/ansible
+        state: present
+        update_cache: yes
+
+    - name: Install Ansible.
+      apt:
+        name: ansible
+        state: present
+
+    - name: Install OpenSSH Server.
+      apt:
+        name: openssh-server
+        state: present
+
+    - name: Ensure sshd is started.
+      ansible.builtin.service:
+        name: sshd
+        state: started
