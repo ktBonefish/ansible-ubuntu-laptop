@@ -73,7 +73,7 @@
 
     - name: Add VirtualBox repository to apt.
       ansible.builtin.apt_repository:
-        repo: deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib
+        repo: deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian focal contrib # Using focal since impish isn't present yet.
         state: present
       notify: force_update_cache
 
@@ -89,7 +89,7 @@
 
     - name: Add Vagrant repository to apt.
       ansible.builtin.apt_repository:
-        repo: deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main
+        repo: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
         state: present
       notify: force_update_cache
 
