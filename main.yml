@@ -54,3 +54,9 @@
       ansible.builtin.service:
         name: sshd
         state: started
+        enabled: yes
+
+    - name: Install pip3
+      apt:
+        name: python3-pip
+        state: present
