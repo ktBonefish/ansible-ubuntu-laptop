@@ -3,6 +3,11 @@
   hosts: all
   become: yes
 
+  handlers:
+    - name: force_update_cache
+      apt:
+        update_cache: yes
+
   tasks:
     - name: Update apt cache
       apt:
@@ -59,4 +64,36 @@
     - name: Install pip3
       apt:
         name: python3-pip
+        state: present
+
+    - name: Add VirtualBox secure key.
+      ansible.builtin.apt_key:
+        url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+        state: present
+
+    - name: Add VirtualBox repository to apt.
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib
+        state: present
+      notify: force_update_cache
+
+    - name: Install VirtualBox.
+      apt:
+        name: virtualbox-6.1
+        state: present
+
+    - name: Add Vagrant secure key.
+      ansible.builtin.apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add Vagrant repository to apt.
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main
+        state: present
+      notify: force_update_cache
+
+    - name: Install Vagrant.
+      apt:
+        name: vagrant
         state: present
