@@ -3,17 +3,13 @@
   hosts: all
   become: yes
 
-  handlers:
-    - name: force_update_cache
+  pre_tasks:
+    - name: Update apt cache if needed.
       apt:
-        update_cache: yes
+        update_cache: true
+        cache_valid_time: 3600
 
   tasks:
-    - name: Update apt cache
-      apt:
-        cache_valid_time: 3600
-        update_cache: yes
-
     - name: Install git
       apt:
         name: git
@@ -75,7 +71,7 @@
       ansible.builtin.apt_repository:
         repo: deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian focal contrib # Using focal since impish isn't present yet.
         state: present
-      notify: force_update_cache
+        update_cache: yes
 
     - name: Install VirtualBox.
       apt:
@@ -91,9 +87,14 @@
       ansible.builtin.apt_repository:
         repo: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
         state: present
-      notify: force_update_cache
+        update_cache: yes
 
     - name: Install Vagrant.
       apt:
         name: vagrant
+        state: present
+
+    - name: Install VIM.
+      apt:
+        name: vim
         state: present
